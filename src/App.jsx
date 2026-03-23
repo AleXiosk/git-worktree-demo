@@ -48,7 +48,7 @@ function App() {
 
     return (
         <div className="app">
-            <Navbar theme={theme} onToggleTheme={handleToggleTheme} />
+            <Navbar />
             <main>
                 <Hero />
                 <SocialProof />

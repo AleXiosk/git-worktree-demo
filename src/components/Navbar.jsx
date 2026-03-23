@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { NAV_LINKS, BRAND } from '../data/navigation';
 
-function Navbar({ theme, onToggleTheme }) {
+function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
-    const nextTheme = theme === 'dark' ? 'light' : 'dark';
 
     return (
         <header className="navbar" role="banner">
@@ -16,7 +15,6 @@ function Navbar({ theme, onToggleTheme }) {
                 <button
                     className="navbar__toggle"
                     onClick={() => setMenuOpen(!menuOpen)}
-                    type="button"
                     aria-expanded={menuOpen}
                     aria-controls="nav-menu"
                     aria-label="切換導覽選單"
@@ -41,25 +39,9 @@ function Navbar({ theme, onToggleTheme }) {
                             </li>
                         ))}
                     </ul>
-                    <div className="navbar__actions">
-                        <button
-                            className="theme-toggle"
-                            onClick={onToggleTheme}
-                            type="button"
-                            aria-label={`切換到${nextTheme === 'dark' ? '深色' : '淺色'}主題`}
-                            aria-pressed={theme === 'dark'}
-                        >
-                            <span className="theme-toggle__icon" aria-hidden="true">
-                                {theme === 'dark' ? '☀' : '☾'}
-                            </span>
-                            <span className="theme-toggle__text">
-                                {`切換至${nextTheme === 'dark' ? '深色' : '淺色'}`}
-                            </span>
-                        </button>
-                        <a href="#demo" className="btn btn--primary btn--sm navbar__cta">
-                            預約 Demo
-                        </a>
-                    </div>
+                    <a href="#demo" className="btn btn--primary btn--sm navbar__cta">
+                        預約 Demo
+                    </a>
                 </nav>
             </div>
         </header>
