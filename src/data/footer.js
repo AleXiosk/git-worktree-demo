@@ -9,6 +9,7 @@ export const FOOTER_DATA = {
             links: [
                 { label: '功能總覽', href: '#features' },
                 { label: '方案價格', href: '#pricing' },
+                { label: '常見問答', href: '#faq' },
                 { label: '產品更新日誌', href: '#' },
                 { label: 'API 文件', href: '#' },
                 { label: '系統狀態', href: '#' },
@@ -21,7 +22,7 @@ export const FOOTER_DATA = {
                 { label: '部落格', href: '#' },
                 { label: '客戶案例', href: '#' },
                 { label: '網路研討會', href: '#' },
-                { label: '幫助中心', href: '#' },
+                { label: '幫助中心', href: '#faq' },
             ],
         },
         {

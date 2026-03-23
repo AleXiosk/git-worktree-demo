@@ -1,72 +1,49 @@
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import SocialProof from './components/SocialProof';
 import Features from './components/Features';
 import UseCases from './components/UseCases';
 import Pricing from './components/Pricing';
+import Faq from './components/Faq';
 import CallToAction from './components/CallToAction';
+import CookieConsent from './components/CookieConsent';
 import Footer from './components/Footer';
 
-const THEME_STORAGE_KEY = 'salespilot-theme';
+const COOKIE_CONSENT_STORAGE_KEY = 'salespilot-cookie-consent';
+const COOKIE_CONSENT_VALUES = new Set(['essential', 'all']);
 
-function getStoredTheme() {
+function getStoredCookieConsent() {
     if (typeof window === 'undefined') {
         return null;
     }
 
-    const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
-    return storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : null;
+    try {
+        const storedConsent = window.localStorage.getItem(COOKIE_CONSENT_STORAGE_KEY);
+        return COOKIE_CONSENT_VALUES.has(storedConsent) ? storedConsent : null;
+    } catch {
+        return null;
+    }
 }
 
-function getSystemTheme() {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
-        return 'light';
+function persistCookieConsent(consent) {
+    if (typeof window === 'undefined') {
+        return;
     }
 
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    try {
+        window.localStorage.setItem(COOKIE_CONSENT_STORAGE_KEY, consent);
+    } catch {
+        // Ignore storage failures and still keep the in-memory decision.
+    }
 }
 
 function App() {
-    const [theme, setTheme] = useState(() => getStoredTheme() ?? getSystemTheme());
-    const [hasStoredThemePreference, setHasStoredThemePreference] = useState(() => getStoredTheme() !== null);
+    const [cookieConsent, setCookieConsent] = useState(() => getStoredCookieConsent());
 
-    useLayoutEffect(() => {
-        document.documentElement.dataset.theme = theme;
-        document.documentElement.style.colorScheme = theme;
-    }, [theme]);
-
-    useEffect(() => {
-        if (hasStoredThemePreference) {
-            window.localStorage.setItem(THEME_STORAGE_KEY, theme);
-            return;
-        }
-
-        window.localStorage.removeItem(THEME_STORAGE_KEY);
-    }, [hasStoredThemePreference, theme]);
-
-    useEffect(() => {
-        if (hasStoredThemePreference || typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
-            return undefined;
-        }
-
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        const handleChange = (event) => {
-            setTheme(event.matches ? 'dark' : 'light');
-        };
-
-        if (typeof mediaQuery.addEventListener === 'function') {
-            mediaQuery.addEventListener('change', handleChange);
-            return () => mediaQuery.removeEventListener('change', handleChange);
-        }
-
-        mediaQuery.addListener(handleChange);
-        return () => mediaQuery.removeListener(handleChange);
-    }, [hasStoredThemePreference]);
-
-    const handleToggleTheme = () => {
-        setHasStoredThemePreference(true);
-        setTheme((currentTheme) => (currentTheme === 'dark' ? 'light' : 'dark'));
+    const handleCookieDecision = (consent) => {
+        setCookieConsent(consent);
+        persistCookieConsent(consent);
     };
 
     return (
@@ -78,9 +55,14 @@ function App() {
                 <Features />
                 <UseCases />
                 <Pricing />
+                <Faq />
                 <CallToAction />
             </main>
             <Footer />
+            <CookieConsent
+                isOpen={!cookieConsent}
+                onDecision={handleCookieDecision}
+            />
         </div>
     );
 }
